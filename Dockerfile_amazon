@@ -7,5 +7,6 @@ RUN apt update \
     && pip3 install ansible boto boto3 \
     && apt install openssh-client -y \
     && chmod 777 ./ansible/presentation.pem \
-    && export ANSIBLE_HOST_KEY_CHECKING=False \
-    && ansible-playbook ./ansible/ec2_deploy.yml --user ubuntu --key-file ./ansible/presentation.pem
+    && export ANSIBLE_HOST_KEY_CHECKING=False
+    
+RUN ansible-playbook ./ansible/ec2_deploy.yml --user ubuntu --key-file ./ansible/presentation.pem
