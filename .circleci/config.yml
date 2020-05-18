@@ -46,7 +46,7 @@ jobs:
       #     command: docker build -t my_ansible .
       - run:
           name: Run docker 
-          command: docker build -f "Dockerfile_amazon"
+          command: docker build -f "Dockerfile_amazon" --tag aws-eshop:1.0 .
 workflows:
   version: 2.1
   build:
