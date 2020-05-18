@@ -4,6 +4,7 @@ vse: &term
 
 version: 2.1
 jobs:
+  # Set up project 
   build:
     <<: *term
     steps:
@@ -11,10 +12,51 @@ jobs:
       - run: npm install
       - run: npm run test
       - run: npm run build
-      
+            - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  # Deploy to AWS - EC2 / ansible            
+  deploy:
+    <<: *term
+    steps:
+      - attach_workspace:
+          at: .                
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - run:
+          name: Try to run shell comand
+          shell: /bin/bash
+          command: echo "Shell is working"
+      - run:
+          name: Install `docker-compose`
+          command: curl -L https://github.com/docker/compose/releases/download/1.25.5/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
+      - run:
+          name: Set rights to run docker
+          command: chmod 777 ~/docker-compose
+      - run:
+          name: Move docker as root to user
+          command: sudo mv ~/docker-compose /usr/local/bin/docker-compose
+      - run:
+          name: Get ansible folder
+          command: git clone https://github.com/hrdyjan1/4IT572_ansible.git ansible
+      - run:
+          name: Go to Ansible folder
+          command: cd ansible
+      - run:
+          name: Set up docker
+          command: docker build -t my_ansible .
+
+# Circle Ci flow of jobs
 workflows:
   version: 2.1
   build:
     jobs:
-      - build
-      
+      - build      
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
