@@ -1,10 +1,11 @@
-FROM node:8
+FROM ubuntu:16.4
 
 COPY . .
 
-RUN npm install \
-  && npm run build
-
-EXPOSE 3000
-
-ENTRYPOINT npm run start
+RUN apt update \
+    && apt install python3-pip -y \
+    && pip3 install ansible boto boto3 \
+    && apt install openssh-client -y \
+    && chmod 777 ./ansible/presentation.pem \
+    && export ANSIBLE_HOST_KEY_CHECKING=False \
+    && ansible-playbook ./ansible/ec2_deploy.yml --user ubuntu --key-file ./ansible/presentation.pem
