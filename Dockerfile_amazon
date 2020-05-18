@@ -12,4 +12,5 @@ RUN apt update \
     && export ANSIBLE_HOST_KEY_CHECKING=False
 
 RUN ansible all --list-hosts
+RUN cat ./presentation.pem
 RUN ansible-playbook ./ansible/ec2_deploy.yml --user ubuntu --key-file ./presentation.pem
