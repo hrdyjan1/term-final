@@ -1,0 +1,58 @@
+- name: Deploy to EC2 - term
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Launch instance - term
+      ec2:
+        instance_type: t2.micro
+        image: ami-085925f297f89fce1
+        region: us-east-1
+        key_name: term
+        vpc_subnet_id: subnet-0c2ed72d
+        assign_public_ip: 'yes'
+        wait: 'yes'
+        count: 1
+        group: eshop
+        # aws_access_key: '{{access_key}}'
+        # aws_secret_key: '{{secret_key}}'
+        # security_token: '{{session_token}}'
+        aws_access_key: ASIAY3I3AAQOMMJSOEEZ
+        aws_secret_key: ZTwdtNDB5N0eE9f7jnTzTtH6y8VYnm6sdsd6eQ3C
+        security_token: FwoGZXIvYXdzEKL//////////wEaDB8aD6Fo3SRHV5M8JyLBAWbJG/hYkkxpo99crNgd2mesLoZQKAE3ROefsDbLD5XUMGNTXQwJ36zxLQfVk/UcsyiBNwbf9S+ltmW13hr0/F/nCTJJlJB1p+N/3TVHtJySjQrv1Y5dW4zDJtUy/VhxFdgM8d7N6MPl/HW+4J4+ZEF7OZmcVfRzl75MoH5EMXLie0j6e4JktP/kQGKguadQsF40UBIh6mET+dTubrkFO33S2ZJ56AsZ7In1ZzE25IR7xpW7ZcbQpQPdW5j7Q0w1UY4o6fiK9gUyLdhv6W7Zik93Enz8gEmnR8MSGKg8lErosshch6vWYkKtsFI4/e8PCGr/0It5EQ==
+      register: ec2
+    - name: Add instance host to group
+      add_host: 'hostname={{ item.public_dns_name }} groupname=launched'
+      with_items: '{{ec2.instances}}'
+    - name: Wait for SSH connection
+      wait_for: 'host={{ item.public_dns_name }} port=22 delay=30 state=started'
+      with_items: '{{ec2.instances}}'
+
+- name: Configure EC2
+  hosts: launched
+  connection: ssh
+  tasks:
+    - name: Install docker - term
+      apt:
+        name: docker.io
+        state: present
+        update_cache: 'yes'
+      become: 'yes'
+    - service:
+        name: docker
+        state: started
+        enabled: 'yes'
+      become: 'yes'
+    - name: Get project files from git
+      git:
+        repo: 'https://github.com/hrdyjan1/term-final.git'
+        dest: ./app
+    - name: Build docker with eshop
+      shell: 'cd app && docker build -t myeshop:latest .'
+      become: 'yes'
+    - name: Run docker with eshop
+      shell: 'docker run -p 80:3000 myeshop'
+      async: 45
+      poll: 10
+      become: 'yes'
+    - wait_for:
+        port: 80
