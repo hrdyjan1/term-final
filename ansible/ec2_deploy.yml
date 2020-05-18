@@ -16,9 +16,9 @@
         # aws_access_key: '{{access_key}}'
         # aws_secret_key: '{{secret_key}}'
         # security_token: '{{session_token}}'
-        aws_access_key: ASIAY3I3AAQOMMJSOEEZ
-        aws_secret_key: ZTwdtNDB5N0eE9f7jnTzTtH6y8VYnm6sdsd6eQ3C
-        security_token: FwoGZXIvYXdzEKL//////////wEaDB8aD6Fo3SRHV5M8JyLBAWbJG/hYkkxpo99crNgd2mesLoZQKAE3ROefsDbLD5XUMGNTXQwJ36zxLQfVk/UcsyiBNwbf9S+ltmW13hr0/F/nCTJJlJB1p+N/3TVHtJySjQrv1Y5dW4zDJtUy/VhxFdgM8d7N6MPl/HW+4J4+ZEF7OZmcVfRzl75MoH5EMXLie0j6e4JktP/kQGKguadQsF40UBIh6mET+dTubrkFO33S2ZJ56AsZ7In1ZzE25IR7xpW7ZcbQpQPdW5j7Q0w1UY4o6fiK9gUyLdhv6W7Zik93Enz8gEmnR8MSGKg8lErosshch6vWYkKtsFI4/e8PCGr/0It5EQ==
+        aws_access_key: ASIAY3I3AAQOEXBRRNJE
+        aws_secret_key: bAsxmTH75NqSKuJ89eO4rBuHRry8jPvy+6bk74pC
+        security_token: FwoGZXIvYXdzEKX//////////wEaDEEL2ESNJhANir/7uyLBARpGlELnp00x1gEd22nbQEyK0uanhdnmTLO6Mi2CVcfZVuUntkni85Aku2PTJrz8mVdhsmE9TvjGVw+hT/Pd5834xJ4RWkKu3Aom8aC80H21+rmVMzjS8Kpvg6NSXDjc6UfhcWMF89IwFimRAm6nQg6GyqC1b4M69IplBvVfIl2JlSs4Z7/9oBPImfLqfj3XlLRium6OrvBbQzwlrC9h4bZHzAGosgO3NiNoiewDlsbz3jBvkLB5FRKGoAyEOFTIj6go0tKL9gUyLWbB3bnwtyx0C8eXXiIUmxj9leT4FZiyeWglZJLZRHaFSh06+EnbydCbgFP/+A==
       register: ec2
     - name: Add instance host to group
       add_host: 'hostname={{ item.public_dns_name }} groupname=launched'
