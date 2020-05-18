@@ -1,12 +1,15 @@
 FROM ubuntu:16.04
 
 COPY . .
+COPY ./ansible /ansible
+COPY ./ansible/presentation.pem .
 
 RUN apt update \
     && apt install python3-pip -y \
     && pip3 install ansible boto boto3 \
     && apt install openssh-client -y \
-    && chmod 777 ./ansible/presentation.pem \
+    && chmod 777 ./presentation.pem \
     && export ANSIBLE_HOST_KEY_CHECKING=False
+
 RUN ansible all --list-hosts
-RUN ansible-playbook ./ansible/ec2_deploy.yml --user ubuntu --key-file ./ansible/presentation.pem
+RUN ansible-playbook ./ansible/ec2_deploy.yml --user ubuntu --key-file ./presentation.pem
